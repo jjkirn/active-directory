@@ -6,3 +6,4 @@
 ## 4. [AD #03 - POWERSHELL: Random Users & Weak Passwords](/video_notes/notes/ad03.md)
 ## 5. [AD #04 - TEARING DOWN the DOMAIN CONTROLLER)](/video_notes/notes/ad04.md)
 ## 6. [AD #05 - BRUTEFORCING DOMAIN PASSWORDS](/video_notes/notes/ad05.md)
+## 7. [AD #06 - BLOODHOUND Domain Enumeration](/video_notes/notes/ad06.md)

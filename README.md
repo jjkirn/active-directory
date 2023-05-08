@@ -5,6 +5,9 @@
 ## There are 11 videos in John's Active Directory - Lab Build. 
 ## Thank you John Hammond for creating this video series.
 ---
+## I have stepped through all of John's 11 videos and created notes on each one. 
+## My notes on each video are available [here.](/video_notes/README.md)
+---
 ## <u>Summary:</u>
 ## The purpose of this repo is to help you create a Windows Active Directory forest inside a VMware Workstation Pro environment on your Windows PC for your learning Active Directory (AD). The installation requires a considerable amount of RAM and Disk Storage:
 ## - A Windows PC with 32 GB of RAM is needed to run all the VMs
@@ -19,7 +22,4 @@
 ## -- Windows Server2022 ISO -> 5GB
 ## -- Windows 11 Enterprise Eval ISO -> 5GB
 ## -- Kali ISO -> 3.1GB
-## The above are consider minimums as you are likely to add additional VMs (like WS02, Kali tools ...).
----
-## I have stepped through all of John's 11 videos and created notes on each one. 
-## My notes on each video are available [here.](/video_notes/README.md)
+## The above are consided minimums as you are likely to add additional VMs (like WS02, Kali tools ...).
