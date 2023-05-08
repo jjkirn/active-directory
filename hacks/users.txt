@@ -1,0 +1,6 @@
+
+alexi	alice	bob
+jim	joe	krbtgt
+sam	Administrator	joe
+linda	Guest	hank
+bogus
