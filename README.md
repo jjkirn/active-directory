@@ -22,7 +22,9 @@ The purpose of this repo is to help you create a Windows Active Directory forest
 -- Kali VM -> 35GB
 ```
 - Disk space for all the ISOs - Total 13.1GB minimum:
+```
 -- Windows Server2022 ISO -> 5GB
 -- Windows 11 Enterprise Eval ISO -> 5GB
 -- Kali ISO -> 3.1GB
+```
 The above are consided minimums as you are likely to add additional VMs (like WS02, Kali tools ...).
