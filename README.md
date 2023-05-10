@@ -13,12 +13,14 @@ My notes on each video are available [here.](/video_notes/README.md)
 The purpose of this repo is to help you create a Windows Active Directory forest inside a VMware Workstation Pro environment on your Windows PC for your learning Active Directory (AD). The installation requires a considerable amount of RAM and Disk Storage:
 - A Windows PC with 32 GB of RAM is needed to run all the VMs
 - Disk space for all the VMs - Total 103GB minimum (Should be SSD based for responsiveness)
-###  -- Base Server2022 VM -> 11GB
-### -- Base Win11 VM -> 12GB
-### -- DC1 VM -> 10GB
-### -- Management VM -> 25 GB
-### -- WS01 VM -> 10GB
-### -- Kali VM -> 35GB
+```
+-- Base Server2022 VM -> 11GB
+-- Base Win11 VM -> 12GB
+-- DC1 VM -> 10GB
+-- Management VM -> 25 GB
+-- WS01 VM -> 10GB
+-- Kali VM -> 35GB
+```
 - Disk space for all the ISOs - Total 13.1GB minimum:
 -- Windows Server2022 ISO -> 5GB
 -- Windows 11 Enterprise Eval ISO -> 5GB
