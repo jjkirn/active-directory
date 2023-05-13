@@ -1,13 +1,13 @@
 # Active Directory Lab Setup
 ## <u>Intro:</u>
 This repo started out as a copy of [John Hammond's active-directory repo](https://github.com/johnHammond/active_directory/) but now contains my additions and notes.
-You can view all of John's associated Youtube videos at this [link.](https://www.youtube.com/playlist?list=PL1H1sBF1VAKVoU6Q2u7BBGPsnkn-rajlp)
+You can view all of [John's associated Youtube videos at this link.](https://www.youtube.com/playlist?list=PL1H1sBF1VAKVoU6Q2u7BBGPsnkn-rajlp)
 There are 11 videos in John's Active Directory - Lab Build. 
 Thank you John Hammond for creating this video series.
 
 ## <u>My Notes:</u>
 I have stepped through all of John's 11 videos and created notes on each one.
-My notes on each video are available [here.](/video_notes/README.md)
+[My notes on each video are available here.](/video_notes/README.md)
 
 ## <u>Summary:</u>
 The purpose of this repo is to help you create a Windows Active Directory forest inside a VMware Workstation Pro environment on your Windows PC for your learning Active Directory (AD). The installation requires a considerable amount of RAM and Disk Storage:
