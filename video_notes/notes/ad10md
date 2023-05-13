@@ -1,0 +1,277 @@
+# [PASSWORDS LEFT OUT IN THE OPEN (Active Directory #10)](https://www.youtube.com/watch?v=EHL8xuRfUF8)
+
+In this video, John "bounces" between two perspectives:
+- Setting up the AD workspace (mods to gen_ad.ps1, ad_schema.json)
+- Attacking using Kali tools (bloodhoud.py, bloodhound, direct view of files from bloodhound.py)
+
+---
+Start out on the Management computer, go to active_directory:
+```
+PS C:\Users\local_admin> cd .\active_directory\
+```
+
+Open up vs code:
+```
+PS C:\Users\local_admin\active_directory> code .
+```
+---
+John discusses making changes to "ad_schema.json" file to support a "show_password" field.
+He opens ["vulnad.ps1" file from the WazeHell github](https://github.com/WazeHell/vulnerable-AD/vulnad.ps1) for ideas on how to support his idea.
+
+---
+John adds a field (at line 16) to the "ad_schema.json" file as follows:
+```
+    "show_password": true,
+```
+
+He also makes a changes (starting at line 35) to the "gen_ad.ps1" file to support utilizing the new field:
+```
+    if ( $userObject.show_password){
+        Set-ADUser $principalName -Description "Your default password is: $password"
+    }
+```
+He then decided to add another user (Dan) (beginning around line 37) with a long...... complicated password to "ad_schema.json":
+```
+    {
+        "name": "Dan An",
+        "password":"HakzNy723bas1jk&1023#hahepleasesubscribelol!",
+        "show_password": true,
+        "groups": [
+            "Employees"
+	    ]
+    }
+```
+He also removed all the "local_admin" stuff from "ad_schema.json".
+
+---
+Now time to put the changes on the Domain controller (DC1).
+
+Reminder, we currently on the Management computer, lets enter the Domain credentials:
+```
+PS C:\Users\local_admin\active_directory> $cred = (Get-Credential)
+[popup for credentials apears]
+XYZ\Adminstrator
+P@ssw0rd123!
+```
+
+Assign variable $dc1 to a new logon session to DC1
+```
+PS C:\Users\local_admin\active_directory\code> $dc1 = New-PSSession -ComputerName 192.168.175.155 -Credential $cred
+```
+
+A login popup will appear -> enter the DC1 credentials 
+```
+xyz\Administrator:P@ssw0rd123!
+```
+
+Enter session to DC1:
+```
+PS C:\Users\local_admin\active_directory> Enter-PSSession $dc1
+[192.168.175.155]: PS C:\Users\Adminstrator\Documents>
+```
+
+---
+I added this as John did it out of order and got errors.
+
+Move to Windows\Tasks directory:
+```
+[192.168.175.155]: PS C:\Users\Adminstrator\Documents> cd C:\Windows\Tasks
+```
+Remove any previous users:
+```
+[192.168.175.155]: PS C:\Windows\Tasks> .\gen_ad.ps1 .\ad_schema.json -Undo
+```
+
+---
+Back to John's steps.
+
+Temporaliy exit PS session:
+```
+[192.168.175.155]: PS C:\Windows\Tasks> exit
+```
+Go to code directory:
+```
+PS C:\Users\local_admin\active_directory> cd code
+```
+
+Transfer the modified "ad_schema" to DC1:
+```
+PS C:\Users\local_admin\active_directory> Copy-Item .\ad_schema.json -ToSession $dc1 -Destination C:\Windows\Tasks
+```
+
+Transfer the modified "gen_ad.ps1" to DC1:
+```
+PS C:\Users\local_admin\active_directory> Copy-Item .\gen_ad.ps1 -ToSession $dc1 -Destination C:\Windows\Tasks
+```
+
+Get back into session to DC1:
+```
+PS C:\Users\local_admin\active_directory> Enter-PSSession $dc1
+[192.168.175.155]: PS C:\Users\Adminstrator\Documents>
+```
+
+Move to Windows\Tasks directory:
+```
+[192.168.175.155]: PS C:\Users\Adminstrator\Documents> cd C:\Windows\Tasks
+```
+
+Run the gen_ad.ps1 script:
+```
+[192.168.175.155]: PS C:\Windows\Tasks> .\gen_ad.ps1 .\ad_schema.json
+```
+
+Verify you can see the descrition field for user Dan:
+```
+[192.168.175.155]: PS C:\Windows\Tasks> Get-ADUser -Identity dan -Properties Description
+
+
+Description       : Your default password is: HakzNy723bas1jk&1023#hahepleasesubscribelol!
+DistinguishedName : CN=Dan An,CN=Users,DC=xyz,DC=com
+Enabled           : True
+GivenName         : Dan
+Name              : Dan An
+ObjectClass       : user
+ObjectGUID        : a544acb7-2607-4b03-a92d-d636223ca111
+SamAccountName    : dan
+SID               : S-1-5-21-1261559441-2749314598-3582758243-1366
+Surname           : An
+UserPrincipalName : dan@xyz.com
+```
+Should see Dan's  password in the Description !
+
+All OK!
+
+---
+Now for the Kali attacking section.
+
+On the Kali VM, open a terminal window:
+```
+┌──(jim㉿kali)-[~/Desktop]
+└─$ cd /tmp
+┌──(jim㉿kali)-[/tmp]
+└─$ mkdir passwords
+┌──(jim㉿kali)-[/tmp]
+└─$ cd passwords
+┌──(jim㉿kali)-[/tmp/passwords]
+└─$ 
+```
+
+Make sure the "/etc/resolv.conf" file shows the Domain controller (DC) info as follows:
+```
+search xyz.com
+nameserver 192.168.175.155
+```
+
+Run the Bloodhound collector (bloodhound.py)
+```
+┌──(jim㉿kali)-[/tmp/passwords]
+└─$ bloodhound-python -u alice -p bubbles -dc dc1.xyz.com -disable-autogc -d xyz.com -c all
+INFO: Found AD domain: xyz.com
+INFO: Getting TGT for user
+INFO: Connecting to LDAP server: dc1.xyz.com
+INFO: Found 1 domains
+INFO: Found 1 domains in the forest
+INFO: Found 2 computers
+INFO: Connecting to LDAP server: dc1.xyz.com
+INFO: Found 8 users
+INFO: Found 53 groups
+INFO: Found 2 gpos
+INFO: Found 1 ous
+INFO: Found 19 containers
+INFO: Found 0 trusts
+INFO: Starting computer enumeration with 10 workers
+INFO: Querying computer: ws01.xyz.com
+INFO: Querying computer: DC1.xyz.com
+INFO: Done in 00M 02S
+```
+Should have several .json files created:
+```
+┌──(jim㉿kali)-[/tmp/passwords]
+└─$ ls
+20230513104916_computers.json   20230513104916_domains.json  20230513104916_groups.json  20230513104916_users.json
+20230513104916_containers.json  20230513104916_gpos.json     20230513104916_ous.json
+```
+
+---
+Time to run Bloodhound.
+
+Start up neo4j in prep for running Bloodhoud:
+```
+┌──(jim㉿kali)-[/tmp/passwords]
+└─$ sudo neo4j console
+Directories in use:
+home:         /var/lib/neo4j
+config:       /etc/neo4j
+logs:         /var/log/neo4j
+plugins:      /var/lib/neo4j/plugins
+import:       /var/lib/neo4j/import
+data:         /var/lib/neo4j/data
+certificates: /var/lib/neo4j/certificates
+licenses:     /var/lib/neo4j/licenses
+run:          /var/lib/neo4j/run
+Starting Neo4j.
+2023-05-13 15:54:07.860+0000 INFO  Starting...
+2023-05-13 15:54:09.328+0000 INFO  This instance is ServerId{f069d37d} (f069d37d-d82d-46e7-b33b-a1e4085c3f41)
+2023-05-13 15:54:11.199+0000 INFO  ======== Neo4j 5.7.0 ========
+2023-05-13 15:54:14.945+0000 INFO  Bolt enabled on 0.0.0.0:7687.
+2023-05-13 15:54:16.560+0000 INFO  Remote interface available at http://localhost:7474/
+2023-05-13 15:54:16.565+0000 INFO  id: BC95FD9B13429BCAFB7DFC87F45BAD05C98F61E6C263B380FC3A8AFEBF97FE69
+2023-05-13 15:54:16.566+0000 INFO  name: system
+2023-05-13 15:54:16.566+0000 INFO  creationDate: 2023-05-04T03:17:27.238Z
+2023-05-13 15:54:16.566+0000 INFO  Started.
+```
+In a new terminal window, run Bloodhound:
+```
+┌──(jim㉿kali)-[~/tmp/passwords]
+└─$ /opt/bloodhound/BloodHound --no-sandbox
+```
+
+Login using these creds:
+```
+neo4j:bloodhoud
+```
+
+Bloodhound should now be running.
+
+At the bottom of the left panel, "Clear Database" to remove any previous data.
+
+Select "Upload Data" on the right side.
+```
+cd to /tmp/passwords
+select all .json files
+Open
+```
+
+Now all data should be in Bloodhound.
+
+In the left panel search "Domain Users"
+
+Click on "Domain Users@XYZ"
+
+On the left Panel -> "Direct Members" -> Click on it
+
+Find "DAN@XYZ", click on it.
+
+When you click on it, the left panel under "Description" shows the password !!!
+
+John notes that the defaut "SharpHound.exe" collector may not import the Description field.
+
+Open a new terminal window to /tmp/passwords:
+```
+┌──(jim㉿kali)-[/tmp/passwords]
+└─$ 
+```
+
+Can just seach the .json files directly for info like "default":
+```
+┌──(jim㉿kali)-[/tmp/passwords]
+└─$ cat 20230513104916_users.json | jq | grep default
+        "description": "Your default password is: HakzNy723bas1jk&1023#hahepleasesubscribelol!",
+```
+
+John hints that some Certification programs may use hiding passwords in "Description".
+
+---
+END OF THIS VIDEO !
+
+

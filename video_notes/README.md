@@ -10,3 +10,4 @@
 8. [AD #07 - POWERSHELL - Automating RANDOM Local Admins](/video_notes/notes/ad07.md)
 9. [AD #08 - Active Directory PowerShell - Generating Local Admins across Hosts](/video_notes/notes/ad08.md)
 10. [AD #09 - Compromising WINDOWS Hosts w/ Impacket](/video_notes/notes/ad09.md)
+11. [AD #10 - PASSWORDS LEFT OUT IN THE OPEN](/video_notes/notes/ad10.md)
