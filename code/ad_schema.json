@@ -10,7 +10,7 @@
     "users": [
 
         {
-            "local_admin": ["ws01"],
+            "local_admin": ["ws1"],
             "name": "Alice Lice",
             "password":"bubbles",
             "groups": [
@@ -18,7 +18,7 @@
             ]
         },
         {
-            "local_admin": ["ws02"],
+            "local_admin": ["ws2"],
             "name": "Bob Ob",
             "password":"ashley",
             "groups": [
@@ -26,7 +26,7 @@
             ]
         },
         {
-            "local_admin": ["ws01", "ws02", "dc1"],
+            "local_admin": ["ws1", "ws2", "dc1"],
             "name": "Charlie Harlie",
             "password":"P@ssw0rdABC",
             "groups": [
